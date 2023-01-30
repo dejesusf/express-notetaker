@@ -2,6 +2,7 @@
 const express= require('express');
 const fs= require ('fs');
 const path= require ('path');
+const { v4: uuidv4 } = require('uuid');
 
 const PORT= process.env.PORT || 3000;
 const app= express();
@@ -10,31 +11,31 @@ const app= express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static('/public'));
+app.use(express.static('public'));
 
 //GET route for index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'develop/public/index.html'))
+  res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
 //GET route for notes.html
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'develop/public/notes.html'))
+  res.sendFile(path.join(__dirname, '/public/notes.html'))
 });
 
 //GET route for api/notes
 app.get('/api/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'develop/db/db.json'))
+  res.sendFile(path.join(__dirname, '/db/db.json'))
 });
 
 //POST notes to api/notes
 app.post('/api/notes', (req, res) => {
   //log that a POST request was received
   //destructure assignment for the items in req.body
-  const { title, text } = req.body;
+  const { title, text} = req.body;
   console.info(req.body);
   
-  fs.readFile('/develop/db/db.json', 'utf-8', (err, data) => {
+  fs.readFile('./db/db.json', 'utf-8', (err, data) => {
     if (err) {
       console.log(err)
     }
@@ -42,11 +43,11 @@ app.post('/api/notes', (req, res) => {
     const newNote= {
       title,
       text,
-      id: note.length++,
+      id: uuidv4(),
     }
     note.push(newNote)
     console.log(note)
-    fs.writeFile('/develop.db/db.json', JSON.stringify(notes), err => console.log(err))
+    fs.writeFile('./db/db.json', JSON.stringify(note), err => console.log(err))
   })
   res.json ({ok:true})
 });
