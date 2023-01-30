@@ -30,14 +30,30 @@ app.get('/api/notes', (req, res) => {
 
 //POST notes to api/notes
 app.post('/api/notes', (req, res) => {
-  fs.readFile('./db/db.json', 'utf-8', (err, data) => {
-    if (err) {
-      console.log(err)
-    }
-    
-  })
-})
+  //log that a POST request was received
+  console.info(`${req.method} request received to add a note`);
+  
+  //destructure assignment for the items in req.body
+  const { title, text } = req.body;
 
-app.listen(PORT, () => {
+  //if all the required properties are present
+  if (title && text) {
+    //variable for the object that will save
+    const newNote= {
+      title,
+      text
+    }
+    const response= {
+    status: 'success',
+    body: newNote,
+  };
+    console.log(response);
+    res.status(201).json(response);
+  } else {
+    res.status(500).json('Error in posting note');
+  }
+});
+
+app.listen(PORT, () => 
   console.log(`listenin' on http://localhost:${PORT} ❤️‍🔥`)
-})
+);
