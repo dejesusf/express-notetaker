@@ -52,6 +52,22 @@ app.post('/api/notes', (req, res) => {
   res.json ({ok:true})
 });
 
+//DELETE notes should be nearly identical to POST
+app.delete('/api/notes/:id', (req, res) => {
+  const uniqueID = req.params.id;
+  fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+    if (err) {
+      console.log(err)
+    } 
+    const note= JSON.parse(data)
+    const filterNote= note.filter(function(note) {
+      return note.id !== uniqueID
+    })
+    fs.writeFile('./db/db.json', JSON.stringify(filterNote), err => console.log(err))
+  })
+  res.json({ok:true})
+})
+
 app.listen(PORT, () => 
   console.log(`listenin' on http://localhost:${PORT} 🔥`)
 );
